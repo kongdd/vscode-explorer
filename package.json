@@ -1,0 +1,99 @@
+{
+  "name": "vscode-explorer",
+  "displayName": "Remote Z Drive Explorer",
+  "description": "Open /mnt/z paths from SSH remote workspaces as local Z:/ paths.",
+  "version": "0.0.1",
+  "publisher": "kongdd",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onCommand:remoteZ.openInExplorer",
+    "onCommand:remoteZ.openFile",
+    "onCommand:remoteZ.copyLocalPath"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "Remote Z Drive Explorer",
+      "properties": {
+        "remoteZ.remotePrefix": {
+          "type": "string",
+          "default": "/mnt/z",
+          "description": "Remote SSH path prefix that maps to the local Windows drive."
+        },
+        "remoteZ.localPrefix": {
+          "type": "string",
+          "default": "Z:/",
+          "description": "Local Windows path prefix used when opening the mapped resource."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "remoteZ.openInExplorer",
+        "title": "mnt: Open in Local Explorer",
+        "category": "Remote Z"
+      },
+      {
+        "command": "remoteZ.openFile",
+        "title": "mnt: Open in Local External App",
+        "category": "Remote Z"
+      },
+      {
+        "command": "remoteZ.copyLocalPath",
+        "title": "Copy Local Path",
+        "category": "Remote Z"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "remoteZ.openInExplorer",
+          "group": "navigation@50"
+        },
+        {
+          "command": "remoteZ.openFile",
+          "group": "navigation@51"
+        },
+        {
+          "command": "remoteZ.copyLocalPath",
+          "group": "navigation@52"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "remoteZ.openInExplorer",
+          "group": "navigation@50"
+        },
+        {
+          "command": "remoteZ.openFile",
+          "group": "navigation@51"
+        },
+        {
+          "command": "remoteZ.copyLocalPath",
+          "group": "navigation@52"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "test": "npm run compile && node tests/pathMapping.test.cjs",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.6.0",
+    "typescript": "^5.8.3"
+  }
+}
