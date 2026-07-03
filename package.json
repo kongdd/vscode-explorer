@@ -53,6 +53,18 @@
         "category": "Remote Z"
       }
     ],
+    "keybindings": [
+      {
+        "command": "remoteZ.openInExplorer",
+        "key": "ctrl+e",
+        "when": "editorTextFocus || filesExplorerFocus"
+      },
+      {
+        "command": "remoteZ.openFile",
+        "key": "ctrl+alt+o",
+        "when": "editorTextFocus || filesExplorerFocus"
+      }
+    ],
     "menus": {
       "explorer/context": [
         {

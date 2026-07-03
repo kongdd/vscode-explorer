@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { execFile } from 'child_process';
+import { existsSync } from 'fs';
 import { convertRemotePath, normalizeSlashes } from './pathMapping';
 
 const CONFIG_SECTION = 'remoteZ';
@@ -103,10 +104,15 @@ function toLocalPathOrNotify(uri?: vscode.Uri): string | undefined {
     return undefined;
   }
 
-  const localPath = convertSelectedRemotePath(uri.path);
+  const localPath = isWindowsLocalFile(uri) ? uri.fsPath : convertSelectedRemotePath(uri.path);
   if (!localPath) {
     const remotePrefix = getNormalizedConfig('remotePrefix');
     void vscode.window.showWarningMessage(`Path is not under ${remotePrefix}: ${uri.path}`);
+    return undefined;
+  }
+
+  if (!existsSync(localPath)) {
+    void vscode.window.showWarningMessage(`Local path does not exist: ${localPath}`);
     return undefined;
   }
 
@@ -115,6 +121,10 @@ function toLocalPathOrNotify(uri?: vscode.Uri): string | undefined {
 
 function convertSelectedRemotePath(remotePath: string): string | undefined {
   return convertRemotePath(remotePath, getNormalizedConfig('remotePrefix'), getNormalizedConfig('localPrefix'));
+}
+
+function isWindowsLocalFile(uri: vscode.Uri): boolean {
+  return process.platform === 'win32' && uri.scheme === 'file';
 }
 
 function getNormalizedConfig(key: 'remotePrefix' | 'localPrefix'): string {

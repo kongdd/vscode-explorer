@@ -20,6 +20,22 @@ must run as a UI extension, not as a remote workspace extension.
 These commands are available from the Explorer context menu, editor context menu,
 and the command palette.
 
+## Shortcuts
+
+- `Ctrl+Alt+O` (`Cmd+Alt+O` on macOS): open the active editor file with the
+  local default application.
+
+VS Code extension keybindings do not support binding mouse gestures such as
+`Ctrl+Click`. Use the shortcut above, the context menu, or the command palette.
+
+## Local Windows Workspaces
+
+When VS Code is opened directly on Windows, local files such as `D:/project/a.txt`
+are opened as-is. Path conversion is only applied to remote paths under
+`remoteZ.remotePrefix`.
+
+Commands run only when the resolved local file or folder exists.
+
 ## Configuration
 
 ```json
