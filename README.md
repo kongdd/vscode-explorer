@@ -1,5 +1,7 @@
 # Remote Z Drive Explorer
 
+> 仅供个人NAS服务器使用。vscode远程时，在本地打开NAS的文件夹或文件
+
 VS Code extension for SSH remote sessions where `/mnt/z` on the remote machine
 and `Z:/` on the local Windows machine point to the same network drive.
 
