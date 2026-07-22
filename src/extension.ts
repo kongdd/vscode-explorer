@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import { execFile } from 'child_process';
 import { existsSync } from 'fs';
+import { promisify } from 'util';
 import { convertRemotePath, normalizeSlashes } from './pathMapping';
 
 const CONFIG_SECTION = 'remoteZ';
+const execFileAsync = promisify(execFile);
 
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
@@ -13,21 +15,8 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 }
 
-export function deactivate(): void {
-  // No resources to dispose.
-}
-
 function resolveUri(uri?: vscode.Uri): vscode.Uri | undefined {
-  if (uri) {
-    return uri;
-  }
-
-  const activeEditor = vscode.window.activeTextEditor;
-  if (activeEditor) {
-    return activeEditor.document.uri;
-  }
-
-  return vscode.workspace.workspaceFolders?.[0]?.uri;
+  return uri ?? vscode.window.activeTextEditor?.document.uri ?? vscode.workspace.workspaceFolders?.[0]?.uri;
 }
 
 async function openInExplorer(uri?: vscode.Uri): Promise<void> {
@@ -58,11 +47,6 @@ async function copyLocalPath(uri?: vscode.Uri): Promise<void> {
   void vscode.window.showInformationMessage(`Copied local path: ${localPath}`);
 }
 
-function toLocalUriOrNotify(uri?: vscode.Uri): vscode.Uri | undefined {
-  const localPath = toLocalPathOrNotify(uri);
-  return localPath ? vscode.Uri.file(localPath) : undefined;
-}
-
 async function revealInLocalFileManager(localPath: string): Promise<void> {
   if (process.platform === 'win32') {
     await execFileAsync('explorer.exe', ['/select,', toWindowsPath(localPath)]);
@@ -79,19 +63,6 @@ async function openWithLocalDefaultApp(localPath: string): Promise<void> {
   }
 
   await vscode.env.openExternal(vscode.Uri.file(localPath));
-}
-
-function execFileAsync(file: string, args: readonly string[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    execFile(file, [...args], (error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      resolve();
-    });
-  });
 }
 
 function toWindowsPath(path: string): string {
